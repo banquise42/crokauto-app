@@ -241,6 +241,7 @@ client.on("connect", () => {
 });
 
 client.on("message", (topic, payload) => {
+  console.log("MQTT RX:", payload.toString());
   const j = JSON.parse(payload.toString());
 
   document.getElementById('status').innerText = j.state;
