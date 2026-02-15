@@ -76,6 +76,9 @@ background:transparent;
 background:#2DF006;
 }
 </style>
+  
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+
 </head>
 
 <body>
@@ -229,6 +232,39 @@ z-index:99;
 let lampEditing = false;
 let scheduleEditing = false;
 let editor;
+const deviceID = "crokauto_001";
+const client = mqtt.connect("wss://broker.emqx.io:8084/mqtt");
+
+client.on("connect", () => {
+  console.log("MQTT connecté");
+  client.subscribe("crok/" + deviceID + "/status");
+});
+
+client.on("message", (topic, payload) => {
+  const j = JSON.parse(payload.toString());
+
+  document.getElementById('status').innerText = j.state;
+  document.getElementById('weight').innerText = j.weight.toFixed(1);
+  document.getElementById('target').innerText = j.target.toFixed(1);
+
+  if(!lampEditing){
+    lampMinutes.value = j.lampMin;
+  }
+
+  if(!scheduleEditing && !editor.classList.contains("show")){
+    loadSchedule(j.schedule);
+  }
+
+  const lampDot=document.getElementById('lampDot');
+  lampDot.classList.toggle('on', j.lamp==="ON");
+
+  const autoDot=document.getElementById('autoDot');
+  if(autoDot)
+    autoDot.style.background = (j.auto==="ON")?"#2DF006":"#c0392b";
+
+  const vidDot=document.getElementById('vidDot');
+  vidDot.classList.toggle('on', j.vid==="ON");
+});
 
 window.onload = () => {
   editor = document.getElementById("editor");
@@ -263,41 +299,6 @@ function saveLampDur(){
 function toggleAuto(){
   fetch('/api/auto');
 }
-
-setInterval(()=>{
-fetch('/api/status')
-.then(r=>r.json())
-.then(j=>{
-
-document.getElementById('status').innerText = j.state;
-document.getElementById('weight').innerText = j.weight.toFixed(1);
-document.getElementById('target').innerText = j.target.toFixed(1);
-
-// lampe
-if(!lampEditing){
-  lampMinutes.value = j.lampMin;
-}
-
-// planning
-if(!scheduleEditing && !editor.classList.contains("show")){
-  loadSchedule(j.schedule);
-}
-
-// voyant lampe
-const lampDot=document.getElementById('lampDot');
-lampDot.classList.toggle('on', j.lamp==="ON");
-
-// voyant auto
-const autoDot = document.getElementById('autoDot');
-if(autoDot)
-  autoDot.style.background = (j.auto === "ON") ? "#2DF006" : "#c0392b";
-
-// voyant vidange
-const vidDot=document.getElementById('vidDot');
-vidDot.classList.toggle('on', j.vid==="ON");
-
-});
-},1000);
 
 let schedule=[];
 
