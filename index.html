@@ -324,9 +324,12 @@ function toggleAuto(){
   client.publish("crok/" + deviceID + "/cmd", "auto");
 }
 
-function mailTest(){fetch('/api/mailtest');}
+function mailTest(){
+  client.publish("crok/" + deviceID + "/cmd", "mailtest");
+}
+
 function saveLampDur(){
-  fetch('/api/lampdur?m='+lampMinutes.value);
+  client.publish("crok/" + deviceID + "/cmd", "lampdur:"+lampMinutes.value);
 }
 function toggleAuto(){
   client.publish("crok/" + deviceID + "/cmd", "auto");
@@ -376,10 +379,10 @@ sendSchedule();
 }
 
 function sendSchedule(){
-let s=schedule.map(p=>p.time+"|"+p.mask).join(",");
-fetch('/api/schedule?data='+s);
+  let s=schedule.map(p=>p.time+"|"+p.mask).join(",");
+  client.publish("crok/" + deviceID + "/cmd", "schedule:"+s);
 }
-
+  
 function loadSchedule(str){
 schedule=[];
 if(!str) return;
