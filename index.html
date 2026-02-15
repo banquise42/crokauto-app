@@ -1,26 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CrokAuto</title>
+
 <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+
+<style>
+body{margin:0;background:#0b0b0b;color:#fff;font-family:-apple-system,Arial}
+.top{background:#ff7a00;color:#000;padding:12px;text-align:center;font-weight:bold;font-size:20px}
+.wrap{max-width:520px;margin:auto;padding:10px}
+.card{background:#151515;border-radius:18px;padding:15px;margin-top:10px}
+.label{color:#aaa;font-size:13px}
+.value{font-size:28px;font-weight:bold}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{border:none;border-radius:16px;padding:16px;font-size:18px;font-weight:bold;cursor:pointer}
+.green{background:#2DF006;color:#000}
+.red{background:#c0392b;color:#fff}
+.blue{background:#2980b9;color:#fff}
+.gold{background:#FFD700;color:#000}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px;background:#333}
+.dot.on{background:#2DF006}
+</style>
 </head>
 
-<body style="background:black;color:white;font-family:sans-serif;text-align:center">
+<body>
 
-<h1>CrokAuto Cloud</h1>
+<div class="top">🐾 CrokAuto Cloud 🐾</div>
 
-<div id="status">---</div>
-<div id="weight">---</div>
+<div class="wrap">
 
-<button onclick="send('dist')">Distribution</button>
-<button onclick="send('stop')">STOP</button>
-<button onclick="send('lamp')">Lampe</button>
+<div class="card">
+<div class="label">État</div>
+<div class="value" id="status">---</div>
+
+<div class="label">Poids réserve</div>
+<div class="value"><span id="weight">0</span> g</div>
+
+<div class="label">Ration cible</div>
+<div class="value"><span id="target">0</span> g</div>
+</div>
+
+<div class="card grid">
+<button class="btn green" onclick="send('dist')">🍽 Distribution</button>
+<button class="btn red" onclick="send('stop')">⛔ STOP</button>
+<button class="btn gold" onclick="send('lamp')">
+<span id="lampDot" class="dot"></span>💡 Lampe
+</button>
+<button class="btn blue" onclick="send('auto')">🤖 Auto</button>
+</div>
+
+</div>
 
 <script>
 
 const device = "crokauto_001";
-
 const client = mqtt.connect("wss://broker.emqx.io:8084/mqtt");
 
 client.on("connect", () => {
@@ -29,9 +64,14 @@ client.on("connect", () => {
 });
 
 client.on("message", (topic, msg) => {
-  const data = JSON.parse(msg.toString());
-  document.getElementById("status").innerText = data.state;
-  document.getElementById("weight").innerText = data.weight + " g";
+  const j = JSON.parse(msg.toString());
+
+  document.getElementById("status").innerText = j.state;
+  document.getElementById("weight").innerText = j.weight.toFixed(1);
+  document.getElementById("target").innerText = j.target.toFixed(1);
+
+  const lampDot = document.getElementById("lampDot");
+  lampDot.classList.toggle("on", j.lamp === "ON");
 });
 
 function send(cmd){
