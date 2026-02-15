@@ -293,15 +293,37 @@ document.getElementById('sub'+x.charAt(0).toUpperCase()+x.slice(1)).classList.to
 function cmd(c){
   client.publish("crok/" + deviceID + "/cmd", c);
 }
-function setRation(){fetch('/api/set?g='+setg.value);}
-function tare(){fetch('/api/tare');}
+
+function setRation(){
+  client.publish("crok/" + deviceID + "/cmd", "set:"+setg.value);
+}
+
+function tare(){
+  client.publish("crok/" + deviceID + "/cmd", "tare");
+}
+
 function toggleLamp(){
   client.publish("crok/" + deviceID + "/cmd", "lamp");
 }
-function resetWifi(){fetch('/api/resetwifi');}
-function saveMail(){
-fetch(`/api/setmail?s=${sender.value}&p=${password.value}&r=${recipient.value}&t=${threshold.value}`);
+
+function resetWifi(){
+  client.publish("crok/" + deviceID + "/cmd", "resetwifi");
 }
+
+function saveMail(){
+  client.publish("crok/" + deviceID + "/cmd",
+    "mail:"+sender.value+"|"+password.value+"|"+recipient.value+"|"+threshold.value
+  );
+}
+
+function saveLampDur(){
+  client.publish("crok/" + deviceID + "/cmd", "lampdur:"+lampMinutes.value);
+}
+
+function toggleAuto(){
+  client.publish("crok/" + deviceID + "/cmd", "auto");
+}
+
 function mailTest(){fetch('/api/mailtest');}
 function saveLampDur(){
   fetch('/api/lampdur?m='+lampMinutes.value);
