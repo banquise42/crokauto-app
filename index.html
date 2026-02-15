@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CrokAuto</title>
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+</head>
+
+<body style="background:black;color:white;font-family:sans-serif;text-align:center">
+
+<h1>CrokAuto Cloud</h1>
+
+<div id="status">---</div>
+<div id="weight">---</div>
+
+<button onclick="send('dist')">Distribution</button>
+<button onclick="send('stop')">STOP</button>
+<button onclick="send('lamp')">Lampe</button>
+
+<script>
+
+const device = "crokauto_001";
+
+const client = mqtt.connect("wss://broker.emqx.io:8084/mqtt");
+
+client.on("connect", () => {
+  console.log("MQTT connecté");
+  client.subscribe(`crok/${device}/status`);
+});
+
+client.on("message", (topic, msg) => {
+  const data = JSON.parse(msg.toString());
+  document.getElementById("status").innerText = data.state;
+  document.getElementById("weight").innerText = data.weight + " g";
+});
+
+function send(cmd){
+  client.publish(`crok/${device}/cmd`, cmd);
+}
+
+</script>
+
+</body>
+</html>
