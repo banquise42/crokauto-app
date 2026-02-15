@@ -284,10 +284,14 @@ document.getElementById('sub'+x.charAt(0).toUpperCase()+x.slice(1)).classList.to
 });
 }
 
-function cmd(c){fetch('/api/'+c);}
+function cmd(c){
+  client.publish("crok/" + deviceID + "/cmd", c);
+}
 function setRation(){fetch('/api/set?g='+setg.value);}
 function tare(){fetch('/api/tare');}
-function toggleLamp(){fetch('/api/lamp');}
+function toggleLamp(){
+  client.publish("crok/" + deviceID + "/cmd", "lamp");
+}
 function resetWifi(){fetch('/api/resetwifi');}
 function saveMail(){
 fetch(`/api/setmail?s=${sender.value}&p=${password.value}&r=${recipient.value}&t=${threshold.value}`);
@@ -297,7 +301,7 @@ function saveLampDur(){
   fetch('/api/lampdur?m='+lampMinutes.value);
 }
 function toggleAuto(){
-  fetch('/api/auto');
+  client.publish("crok/" + deviceID + "/cmd", "auto");
 }
 
 let schedule=[];
