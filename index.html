@@ -246,11 +246,16 @@ client.on("message", (topic, payload) => {
 
   document.getElementById('status').innerText = j.state;
   document.getElementById('weight').innerText = j.weight.toFixed(1);
+if(j.target !== undefined)
   document.getElementById('target').innerText = j.target.toFixed(1);
 
-  if(!lampEditing){
-    lampMinutes.value = j.lampMin;
+ if (!lampEditing) {
+  const lampInput = document.getElementById("lampMinutes");
+  if (lampInput && j.lampMin !== undefined && j.lampMin !== null) {
+    lampInput.value = j.lampMin;
   }
+}
+
 
   if(!scheduleEditing && !editor.classList.contains("show")){
     loadSchedule(j.schedule);
