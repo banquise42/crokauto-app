@@ -234,9 +234,11 @@ let scheduleEditing = false;
 let editor;
 const deviceID = "crokauto_001";
 const client = mqtt.connect("wss://broker.emqx.io:8084/mqtt");
+let mqttReady = false;
 
 client.on("connect", () => {
   console.log("MQTT connecté");
+  mqttReady = true;
   client.subscribe("crok/" + deviceID + "/status");
 });
 
@@ -293,18 +295,25 @@ document.getElementById('sub'+x.charAt(0).toUpperCase()+x.slice(1)).classList.to
 }
 
 function cmd(c){
+  if(!mqttReady){
+    alert("Connexion MQTT en cours…");
+    return;
+  }
   client.publish("crok/" + deviceID + "/cmd", c);
 }
 
 function setRation(){
+  if(!mqttReady) return;
   client.publish("crok/" + deviceID + "/cmd", "set:"+setg.value);
 }
 
 function tare(){
+  if(!mqttReady) return;
   client.publish("crok/" + deviceID + "/cmd", "tare");
 }
 
 function toggleLamp(){
+  if(!mqttReady) return;
   client.publish("crok/" + deviceID + "/cmd", "lamp");
 }
 
@@ -323,6 +332,7 @@ function saveLampDur(){
 }
 
 function toggleAuto(){
+  if(!mqttReady) return;
   client.publish("crok/" + deviceID + "/cmd", "auto");
 }
 
