@@ -121,6 +121,12 @@ background:#2DF006;
 <span id="lampDot" class="dot"></span>💡 Lampe
 </button>
 </div>
+  
+<div class="card">
+  <div class="label">Historique distributions</div>
+  <div id="historyBox" class="small"></div>
+  <button class="btn red" onclick="clearHistory()">Effacer</button>
+</div>
 
 <div class="card">
 <div class="label">Définir poids de la ration</div>
@@ -287,6 +293,7 @@ if(lastState === "DISTRIBUTION" && j.state === "IDLE"){
     new Date().toLocaleTimeString() +
     " — " + (j.target !== undefined ? j.target.toFixed(1) : "?") + " g"
   );
+  renderHistory();
 }
 
 lastState = j.state;
@@ -529,6 +536,17 @@ function renderHistory(){
     div.innerText = h;
     box.appendChild(div);
   });
+}
+function renderHistory(){
+  const box = document.getElementById("historyBox");
+  if(!box) return;
+
+  box.innerHTML = history.slice(-20).reverse().join("<br>");
+}
+
+function clearHistory(){
+  history = [];
+  renderHistory();
 }
 
 </script>
