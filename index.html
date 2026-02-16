@@ -233,7 +233,7 @@ let lampEditing = false;
 let scheduleEditing = false;
 let editor;
 const deviceID = "crokauto_001";
-const client = mqtt.connect("wss://broker.emqx.io:8084/mqtt");
+const client = mqtt.connect("wss://broker.hivemq.com:8884/mqtt");
 let mqttReady = false;
 
 client.on("connect", () => {
