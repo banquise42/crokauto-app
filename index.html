@@ -280,7 +280,7 @@ client.on("message", (topic, payload) => {
 
   // ===== HISTORIQUE =====
   if(topic.endsWith("/history")){
-    renderHistory(text);
+    renderHistory();
     return;
   }
 
@@ -516,15 +516,22 @@ scheduleEditing = false;
 closeEdit();
 }
 function renderHistory(){
-  const box = document.getElementById("historyList");
-  box.innerHTML = "";
+  // popup
+  const list = document.getElementById("historyList");
+  list.innerHTML = "";
 
   history.slice(-30).reverse().forEach(h=>{
     const div = document.createElement("div");
     div.className = "card";
     div.innerText = h;
-    box.appendChild(div);
+    list.appendChild(div);
   });
+
+  // résumé accueil
+  const box = document.getElementById("historyBox");
+  if(box){
+    box.innerHTML = history.slice(-5).reverse().join("<br>");
+  }
 }
 
 function clearHistory(){
