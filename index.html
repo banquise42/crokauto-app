@@ -125,7 +125,6 @@ background:#2DF006;
 <div class="card">
   <div class="label">Historique distributions</div>
   <div id="historyBox" class="small"></div>
-  <button class="btn red" onclick="clearHistory()">Effacer</button>
 </div>
 
 <div class="card">
@@ -247,6 +246,7 @@ padding:10px;
 <div class="value">📜 Historique</div>
 <div id="historyList"></div>
 
+<button class="btn red" onclick="clearHistory()">Effacer</button>
 <button class="btn gray" onclick="hideHistory()">Fermer</button>
 </div>
 
@@ -537,6 +537,10 @@ function renderHistory(){
 function clearHistory(){
   history = [];
   renderHistory();
+}
+  
+function hideHistory(){
+  document.getElementById("historyPanel").classList.add("hidden");
 }
 
 </script>
