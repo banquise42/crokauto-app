@@ -116,7 +116,7 @@ background:#2DF006;
 <div class="card grid">
 <button class="btn green" onclick="cmd('dist')">🍽 Distribution</button>
 <button class="btn red" onclick="cmd('stop')">⛔ STOP</button>
-<button class="btn purple" onclick="window.location='/history'">📜 Historique</button>
+<button class="btn purple" onclick="alert('Historique dispo seulement en local')">📜 Historique</button>
 <button id="lampBtn" class="btn gold" onclick="toggleLamp()">
 <span id="lampDot" class="dot"></span>💡 Lampe
 </button>
@@ -262,7 +262,9 @@ if(j.target !== undefined)
   }
 
   const lampDot=document.getElementById('lampDot');
-  lampDot.classList.toggle('on', j.lamp==="ON");
+  if(lampDot){
+    lampDot.classList.toggle('on', j.lamp==="ON");
+}
 
   const autoDot=document.getElementById('autoDot');
   if(autoDot)
@@ -326,13 +328,6 @@ function toggleAuto(){
 
 function mailTest(){
   client.publish("crok/" + deviceID + "/cmd", "mailtest");
-}
-
-function saveLampDur(){
-  client.publish("crok/" + deviceID + "/cmd", "lampdur:"+lampMinutes.value);
-}
-function toggleAuto(){
-  client.publish("crok/" + deviceID + "/cmd", "auto");
 }
 
 let schedule=[];
