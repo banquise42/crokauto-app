@@ -253,6 +253,9 @@ let editor;
 const deviceID = "crokauto_001";
 const client = mqtt.connect("wss://broker.hivemq.com:8884/mqtt");
 let mqttReady = false;
+  
+let lastState = "";
+let history = [];
 
 client.on("connect", () => {
   console.log("MQTT connecté");
@@ -278,11 +281,15 @@ client.on("message", (topic, payload) => {
   // ===== STATUS NORMAL =====
   const j = JSON.parse(text);
 
+  // ✅ Historique: on log seulement quand une distribution se termine
+if(lastState === "DISTRIBUTION" && j.state === "IDLE"){
   history.push(
-  new Date().toLocaleTimeString() +
-  " — " + j.state +
-  " — " + j.weight.toFixed(1) + " g"
-);
+    new Date().toLocaleTimeString() +
+    " — " + (j.target !== undefined ? j.target.toFixed(1) : "?") + " g"
+  );
+}
+
+lastState = j.state;
 
   document.getElementById('status').innerText = j.state;
   document.getElementById('weight').innerText = j.weight.toFixed(1);
