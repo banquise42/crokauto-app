@@ -226,6 +226,24 @@ z-index:99;
 <button class="btn gray" onclick="closeEdit()">Annuler</button>
 
 </div>
+  
+</div>
+<div id="historyPanel" class="hidden" style="
+position:fixed;
+top:0;left:0;right:0;bottom:0;
+background:#000c;
+overflow:auto;
+z-index:999;
+padding:10px;
+">
+
+<div class="card">
+<div class="value">📜 Historique</div>
+<div id="historyList"></div>
+
+<button class="btn gray" onclick="hideHistory()">Fermer</button>
+</div>
+
 </div>
 
 <script>
