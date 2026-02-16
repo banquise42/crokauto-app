@@ -258,11 +258,26 @@ client.on("connect", () => {
   console.log("MQTT connecté");
   mqttReady = true;
   client.subscribe("crok/" + deviceID + "/status");
+  client.subscribe("crok/" + deviceID + "/history");
+
+  // demande l'historique
+  client.publish("crok/" + deviceID + "/cmd", "gethistory");
 });
 
 client.on("message", (topic, payload) => {
-  console.log("MQTT RX:", payload.toString());
-  const j = JSON.parse(payload.toString());
+
+  const text = payload.toString();
+  console.log("MQTT RX:", topic, text);
+
+  // ===== HISTORIQUE =====
+  if(topic.endsWith("/history")){
+    renderHistory(text);
+    return;
+  }
+
+  // ===== STATUS NORMAL =====
+  const j = JSON.parse(text);
+
   history.push(
   new Date().toLocaleTimeString() +
   " — " + j.state +
